@@ -4,7 +4,7 @@ version = "0.1.0"
 authors = ["Sebastien Lacoste <contact@graphman.fr>"]
 
 [dependencies]
-rocket = "0.3.3"
+rocket = "0.3.8"
 rocket_codegen = "0.3.3"
 rocket_contrib = "0.3.3"
 regex = "0.2.2"
