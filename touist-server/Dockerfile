@@ -7,7 +7,7 @@ WORKDIR /usr/src/app
 # See: https://stackoverflow.com/a/39662015/3808537
 # Note that 'cargo install' seems to re-build everything; I run 'cargo build'
 # instead.
-COPY Cargo.toml dummy.rs Rocket.toml /usr/src/app/
+COPY Cargo.toml Cargo.lock dummy.rs Rocket.toml /usr/src/app/
 RUN cargo build --lib
 
 
