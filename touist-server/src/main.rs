@@ -142,5 +142,6 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 }
 
 fn main() {
-    rocket::ignite().mount("/api", routes![index, latex, solve]).launch();
+    let path = & std::env::var("ROCKET_BASE").unwrap_or("/api".to_string());
+    rocket::ignite().mount(path, routes![index, latex, solve]).launch();
 }
