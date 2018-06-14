@@ -1,5 +1,9 @@
 FROM rust:latest
 
+# IMPORTANT: if the build fails because of some error more or less
+# linked to the fact we are using the nightly: first, try to build
+# without cache so that the latest rustc compiler is downloaded.
+#     docker build . --no-cache
 RUN rustup default nightly
 WORKDIR /usr/src/app
 
