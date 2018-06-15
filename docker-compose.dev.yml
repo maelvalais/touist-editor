@@ -21,6 +21,10 @@ services:
     command: cargo run
     volumes:
       - ./touist-server/src:/usr/src/app/src
+    environment:
+      - ROCKET_ENV=dev
+      - ROCKET_BASE=/api
+      - HOST=${HOST}
 
   touist_ide:
     container_name: touist_ide
@@ -29,3 +33,5 @@ services:
     volumes:
       - ./touist-ide:/usr/src/app
       - /usr/src/app/node_modules
+    environment:
+      - API_URL=/api

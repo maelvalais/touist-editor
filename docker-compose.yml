@@ -18,8 +18,11 @@ services:
     build: ./touist-server
     environment:
       - ROCKET_ENV=prod
+      - ROCKET_BASE=/api
       - HOST=${HOST}
 
   touist_ide:
     container_name: touist_ide
     build: ./touist-ide
+    environment:
+      - API_URL=/api
