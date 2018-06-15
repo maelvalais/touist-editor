@@ -55,11 +55,15 @@ fn parse_error(error: String) -> Option<TouistError> {
     return None
 }
 
+lazy_static! {
+    static ref BASE : String = std::env::var("ROCKET_BASE").unwrap_or("/".to_string());
+}
+
 #[get("/")]
 fn index() -> Json<Value> {
     Json(json!({
-        "solve": "/api/solve",
-        "latex": "/api/latex"
+        "solve": format!("{}solve", *BASE),
+        "latex": format!("{}latex", *BASE)
     }))
 }
 
@@ -142,6 +146,5 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 }
 
 fn main() {
-    let path = & std::env::var("ROCKET_BASE").unwrap_or("/api".to_string());
-    rocket::ignite().mount(path, routes![index, latex, solve]).launch();
+    rocket::ignite().mount(&BASE, routes![index, latex, solve]).launch();
 }
