@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import Vue from "vue";
+import Vue from 'vue';
 
 export default {
-  name: "SudokuModel",
-  props: ["currentModelIndex", "models"],
+  name: 'SudokuModel',
+  props: ['currentModelIndex', 'models'],
   data: () => ({
-    values: {}
+    values: {},
   }),
   mounted() {
     this.updateSudoku(this.models[this.currentModelIndex]);
@@ -35,18 +35,18 @@ export default {
           const match = re.exec(key);
           Vue.set(this.values, `${match[1]}-${match[2]}`, match[3]);
         });
-    }
+    },
   },
   watch: {
     currentModelIndex(newModelIndex) {
       this.updateSudoku(this.models[newModelIndex]);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../assets/variables.scss";
+@import '../../assets/variables.scss';
 
 .sudoku-container {
   max-height: calc(100vh - 240px);

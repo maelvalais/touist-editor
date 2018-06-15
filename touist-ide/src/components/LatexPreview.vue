@@ -6,21 +6,21 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import katex from "katex";
+import { mapGetters } from 'vuex';
+import katex from 'katex';
 
-import "katex/dist/katex.min.css";
+import 'katex/dist/katex.min.css';
 
 export default {
-  name: "LatexPreview",
+  name: 'LatexPreview',
   data: () => ({
-    latexHtml: "",
+    latexHtml: '',
     error: false,
     zoom: 1,
-    currentLatexFile: ""
+    currentLatexFile: '',
   }),
   computed: {
-    ...mapGetters(["openFile", "openFileLatex"])
+    ...mapGetters(['openFile', 'openFileLatex']),
   },
   methods: {
     updateLatex(latex) {
@@ -32,18 +32,18 @@ export default {
         console.error(e);
         this.error = true;
       }
-    }
+    },
   },
   watch: {
     openFileLatex(newLatex) {
       this.updateLatex(newLatex);
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../assets/variables.scss";
+@import '../assets/variables.scss';
 
 .preview {
   position: relative;

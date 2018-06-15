@@ -48,22 +48,22 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import * as modelTypes from "./model-types";
+import { mapGetters } from 'vuex';
+import * as modelTypes from './model-types';
 
 export default {
-  name: "ModelList",
+  name: 'ModelList',
   components: {
-    ...modelTypes
+    ...modelTypes,
   },
   data: () => ({
-    modelType: "table-model",
+    modelType: 'table-model',
     currentModelIndex: 0,
-    keyFilter: "",
-    valueFilter: null
+    keyFilter: '',
+    valueFilter: null,
   }),
   computed: {
-    ...mapGetters(["openFile"])
+    ...mapGetters(['openFile']),
   },
   methods: {
     changeValueFilter(value) {
@@ -73,13 +73,13 @@ export default {
         this.valueFilter = true;
       else if (this.valueFilter === null) this.valueFilter = value;
       else this.valueFilter = null;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../assets/variables.scss";
+@import '../assets/variables.scss';
 
 .model-list {
   padding: 30px 10px;

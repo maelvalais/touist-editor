@@ -27,19 +27,19 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
-import FileList from "@/components/FileList";
-import TouistEditor from "@/components/TouistEditor";
-import LatexPreview from "@/components/LatexPreview";
-import ModelList from "@/components/ModelList";
+import { mapActions, mapGetters } from 'vuex';
+import FileList from '@/components/FileList';
+import TouistEditor from '@/components/TouistEditor';
+import LatexPreview from '@/components/LatexPreview';
+import ModelList from '@/components/ModelList';
 
 export default {
-  name: "Editor",
+  name: 'Editor',
   components: {
     FileList,
     TouistEditor,
     LatexPreview,
-    ModelList
+    ModelList,
   },
   data: () => ({
     fileListOpen: true,
@@ -47,10 +47,10 @@ export default {
     modelListOpen: false,
     dragging: false,
     startDragX: 0,
-    xOffset: 0
+    xOffset: 0,
   }),
   created() {
-    document.addEventListener("keydown", async e => {
+    document.addEventListener('keydown', async e => {
       if (e.keyCode === 27 && this.modelListOpen) {
         this.modelListOpen = false;
       }
@@ -60,21 +60,21 @@ export default {
         this.modelListOpen = true;
       }
     });
-    document.addEventListener("mousemove", e => {
+    document.addEventListener('mousemove', e => {
       this.fileListToggleOpen = e.clientX <= (this.fileListOpen ? 300 : 50);
     });
   },
   computed: {
-    ...mapGetters(["openFile"]),
+    ...mapGetters(['openFile']),
     rightWidth() {
       return `calc(40% - ${this.xOffset}px)`;
     },
     editorWidth() {
       return `calc(60% + ${this.xOffset}px)`;
-    }
+    },
   },
   methods: {
-    ...mapActions(["solve"]),
+    ...mapActions(['solve']),
     startDrag(e) {
       this.dragging = true;
       this.startDragX = e.clientX;
@@ -82,18 +82,18 @@ export default {
     endDrag(e) {
       this.dragging = false;
       this.xOffset += e.clientX - this.startDragX;
-    }
+    },
   },
   watch: {
     $route(old, n) {
       if (old.path !== n.path) this.modelListOpen = false;
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-@import "../assets/variables.scss";
+@import '../assets/variables.scss';
 
 .editor-page {
   display: flex;

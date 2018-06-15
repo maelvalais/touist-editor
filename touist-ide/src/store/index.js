@@ -1,72 +1,72 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import createLogger from "vuex/dist/logger";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import createLogger from 'vuex/dist/logger';
 
-import axios from "axios";
+import axios from 'axios';
 
-import config from "@/config";
-import defaultFiles from "@/assets/defaultFiles.json";
+import config from '@/config';
+import defaultFiles from '@/assets/defaultFiles.json';
 
 Vue.use(Vuex);
 
 const defaultFile = {
-  name: "Default file",
-  content: ";; Default file",
-  latex: "",
-  solver: "sat",
+  name: 'Default file',
+  content: ';; Default file',
+  latex: '',
+  solver: 'sat',
   error: null,
-  models: []
+  models: [],
 };
 
 const initialState = {
   files:
     defaultFiles.length > 0
       ? defaultFiles.map(f => ({ ...defaultFile, ...f }))
-      : [defaultFile]
+      : [defaultFile],
 };
 
 const mutations = {
   setLatex(state, { fileName, latex }) {
     const found = state.files.find(f => f.name === fileName);
     if (found) {
-      Vue.set(found, "latex", latex);
+      Vue.set(found, 'latex', latex);
     }
   },
   setError(state, { fileName, error }) {
     const found = state.files.find(f => f.name === fileName);
     if (found) {
-      Vue.set(found, "error", error);
+      Vue.set(found, 'error', error);
     }
   },
   setContent(state, { fileName, content }) {
     const found = state.files.find(f => f.name === fileName);
     if (found) {
-      Vue.set(found, "content", content);
+      Vue.set(found, 'content', content);
     }
   },
   setName(state, { fileName, name }) {
     const found = state.files.find(f => f.name === fileName);
     if (found) {
-      Vue.set(found, "name", name);
+      Vue.set(found, 'name', name);
     }
   },
   setModels(state, { fileName, models }) {
     const found = state.files.find(f => f.name === fileName);
     if (found) {
-      Vue.set(found, "models", models);
+      Vue.set(found, 'models', models);
     }
   },
   setSolver(state, { fileName, solver }) {
     const found = state.files.find(f => f.name === fileName);
     if (found) {
-      Vue.set(found, "solver", solver);
+      Vue.set(found, 'solver', solver);
     }
   },
   newFile(state, name) {
     state.files.push({
       ...defaultFile,
       name,
-      content: `;; ${name}`
+      content: `;; ${name}`,
     });
   },
   deleteFile(state, name) {
@@ -74,11 +74,11 @@ const mutations = {
     if (state.files.length === 0) {
       state.files.push({
         ...defaultFile,
-        name: "New file",
-        content: ";; New file"
+        name: 'New file',
+        content: ';; New file',
       });
     }
-  }
+  },
 };
 
 const actions = {
@@ -88,31 +88,31 @@ const actions = {
   ) {
     const file = state.files.find(f => f.name === fileName);
     if ((!file || newContent === file.content) && !force) return;
-    const { error, latex } = (await axios.get("{config.api_url}/latex", {
+    const { error, latex } = (await axios.get('{config.api_url}/latex', {
       params: {
         source: newContent,
-        solver: file.solver
-      }
+        solver: file.solver,
+      },
     })).data;
 
-    commit("setLatex", { fileName, latex });
-    commit("setError", { fileName, error });
+    commit('setLatex', { fileName, latex });
+    commit('setError', { fileName, error });
   },
   async solve({ commit, state }, fileName) {
     const file = state.files.find(f => f.name === fileName);
     if (!file || !file.content) return;
-    const { models } = (await axios.get("{config.api_url}/solve", {
+    const { models } = (await axios.get('{config.api_url}/solve', {
       params: {
         source: file.content,
-        solver: file.solver
-      }
+        solver: file.solver,
+      },
     })).data;
-    commit("setModels", { fileName, models });
+    commit('setModels', { fileName, models });
   },
   updateContent({ commit }, { fileName, newContent }) {
-    commit("setContent", { fileName, content: newContent });
+    commit('setContent', { fileName, content: newContent });
     // save to localstorage/files
-  }
+  },
 };
 
 const getters = {
@@ -122,7 +122,7 @@ const getters = {
     return null;
   },
   openFileLatex: (state, { openFile }) => openFile && openFile.latex,
-  defaultFile: state => (state.files.length > 0 ? state.files[0] : null)
+  defaultFile: state => (state.files.length > 0 ? state.files[0] : null),
 };
 
 export default new Vuex.Store({
@@ -131,5 +131,5 @@ export default new Vuex.Store({
   getters,
   state: initialState,
   strict: config.isDev,
-  plugins: config.isDev ? [createLogger()] : []
+  plugins: config.isDev ? [createLogger()] : [],
 });

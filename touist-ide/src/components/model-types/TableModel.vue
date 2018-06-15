@@ -18,16 +18,16 @@
 
 <script>
 export default {
-  name: "TableModel",
-  props: ["currentModelIndex", "models", "keyFilter", "valueFilter"],
+  name: 'TableModel',
+  props: ['currentModelIndex', 'models', 'keyFilter', 'valueFilter'],
   computed: {
     filterRegexp() {
       try {
-        return new RegExp(this.keyFilter.split(":")[0]);
+        return new RegExp(this.keyFilter.split(':')[0]);
       } catch (e) {
         return null;
       }
-    }
+    },
   },
   methods: {
     valid(key, value) {
@@ -36,13 +36,13 @@ export default {
           (this.filterRegexp && this.filterRegexp.test(key))) &&
         (this.valueFilter === null || value === this.valueFilter)
       );
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style lang="scss">
-@import "../../assets/variables.scss";
+@import '../../assets/variables.scss';
 
 .table-container {
   max-height: calc(100vh - 250px);
