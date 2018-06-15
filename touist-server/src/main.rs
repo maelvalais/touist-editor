@@ -169,7 +169,6 @@ fn not_found() -> Json<Value> {
 fn main() {
     rocket::ignite()
         .mount(&BASE, routes![index, latex, solve, ping, healthcheck,])
-        .mount("/", routes![ping, healthcheck])
         .catch(errors![not_found])
         .launch();
 }
