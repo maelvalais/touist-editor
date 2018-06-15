@@ -35,6 +35,11 @@ struct TouistInput {
     solver: String
 }
 
+// ROCKET_BASE allows to set the appropriate URL base instead of the (default) / path.
+lazy_static! {
+    static ref BASE : String = std::env::var("ROCKET_BASE").unwrap_or("/".to_string());
+}
+
 fn parse_error(error: String) -> Option<TouistError> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"line (?P<line>[0-9]+), col (?P<colstart>[0-9]+)-(?P<colend>[0-9]+): error: (?P<message>[\s\S]*)").unwrap();
@@ -55,15 +60,11 @@ fn parse_error(error: String) -> Option<TouistError> {
     return None
 }
 
-lazy_static! {
-    static ref BASE : String = std::env::var("ROCKET_BASE").unwrap_or("/".to_string());
-}
-
 #[get("/")]
 fn index() -> Json<Value> {
     Json(json!({
-        "solve": format!("{}solve", *BASE),
-        "latex": format!("{}latex", *BASE)
+        "solve": format!("{base}/solve", base = *BASE.trim_right_matches("/")),
+        "latex": format!("{base}/latex", base = *BASE.trim_right_matches("/"))
     }))
 }
 
