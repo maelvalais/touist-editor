@@ -63,8 +63,8 @@ fn parse_error(error: String) -> Option<TouistError> {
 #[get("/")]
 fn index() -> Json<Value> {
     Json(json!({
-        "solve": format!("{base}/solve", base = *BASE.trim_right_matches("/")),
-        "latex": format!("{base}/latex", base = *BASE.trim_right_matches("/"))
+        "solve": format!("{}/solve", BASE.trim_right_matches("/")),
+        "latex": format!("{}/latex", BASE.trim_right_matches("/"))
     }))
 }
 
