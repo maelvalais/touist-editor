@@ -68,6 +68,18 @@ fn index() -> Json<Value> {
     }))
 }
 
+#[get("/ping")]
+pub fn ping() -> Json<Value> {
+    Json(json!({
+        "pong": true
+    }))
+}
+
+#[get("/healthcheck")]
+pub fn healthcheck() -> Json<Value> {
+    Json(json!({"message": "All good"}))
+}
+
 #[get("/latex?<touist_input>")]
 fn latex(touist_input: TouistInput) -> Json<Value> {
     let process =
@@ -147,5 +159,5 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 }
 
 fn main() {
-    rocket::ignite().mount(&BASE, routes![index, latex, solve]).launch();
+    rocket::ignite().mount(&BASE, routes![index, latex, solve, ping, healthcheck]).launch();
 }
