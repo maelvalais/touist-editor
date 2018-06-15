@@ -15,13 +15,13 @@
 </template>
 
 <script>
-import Vue from 'vue';
+import Vue from "vue";
 
 export default {
-  name: 'SudokuModel',
-  props: ['currentModelIndex', 'models'],
+  name: "SudokuModel",
+  props: ["currentModelIndex", "models"],
   data: () => ({
-    values: {},
+    values: {}
   }),
   mounted() {
     this.updateSudoku(this.models[this.currentModelIndex]);
@@ -29,17 +29,19 @@ export default {
   methods: {
     updateSudoku(model) {
       const re = /\w*\((\d),(\d),(\d)\)/;
-      Object.keys(model).filter(key => !!model[key]).forEach((key) => {
-        const match = re.exec(key);
-        Vue.set(this.values, `${match[1]}-${match[2]}`, match[3]);
-      });
-    },
+      Object.keys(model)
+        .filter(key => !!model[key])
+        .forEach(key => {
+          const match = re.exec(key);
+          Vue.set(this.values, `${match[1]}-${match[2]}`, match[3]);
+        });
+    }
   },
   watch: {
     currentModelIndex(newModelIndex) {
       this.updateSudoku(this.models[newModelIndex]);
-    },
-  },
+    }
+  }
 };
 </script>
 

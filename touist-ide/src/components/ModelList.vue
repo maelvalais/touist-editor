@@ -48,32 +48,33 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import * as modelTypes from './model-types';
+import { mapGetters } from "vuex";
+import * as modelTypes from "./model-types";
 
 export default {
-  name: 'ModelList',
+  name: "ModelList",
   components: {
-    ...modelTypes,
+    ...modelTypes
   },
   data: () => ({
-    modelType: 'table-model',
+    modelType: "table-model",
     currentModelIndex: 0,
-    keyFilter: '',
-    valueFilter: null,
+    keyFilter: "",
+    valueFilter: null
   }),
   computed: {
-    ...mapGetters(['openFile']),
+    ...mapGetters(["openFile"])
   },
   methods: {
     changeValueFilter(value) {
       if (value === this.valueFilter) this.valueFilter = null;
       else if (value && this.valueFilter !== false) this.valueFilter = false;
-      else if (value === false && this.valueFilter !== true) this.valueFilter = true;
+      else if (value === false && this.valueFilter !== true)
+        this.valueFilter = true;
       else if (this.valueFilter === null) this.valueFilter = value;
       else this.valueFilter = null;
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -85,7 +86,7 @@ export default {
   border-top: 1px solid $mid_color;
   box-shadow: 0 -4px 5px -5px rgba(0, 0, 0, 0.5);
   z-index: 100;
-  background-color: #ECF0F1;
+  background-color: #ecf0f1;
   text-align: center;
   height: 100%;
 
@@ -160,7 +161,8 @@ export default {
     justify-content: center;
     font-size: 17px;
 
-    .next-model, .previous-model {
+    .next-model,
+    .previous-model {
       border-radius: 5px;
       padding: 5px;
       color: white;

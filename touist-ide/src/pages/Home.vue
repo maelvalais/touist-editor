@@ -9,13 +9,13 @@
 </template>
 
 <script>
-import config from '@/config';
+import config from "@/config";
 
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   data: () => ({
-    config,
-  }),
+    config
+  })
 };
 </script>
 
@@ -32,5 +32,4 @@ export default {
     font-size: 40px;
   }
 }
-
 </style>

@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'app',
+  name: "app"
 };
 </script>
 
@@ -17,12 +17,14 @@ html {
   overflow: hidden;
 }
 
-*, *:before, *:after {
+*,
+*:before,
+*:after {
   box-sizing: inherit;
 }
 
 #app {
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100vh;

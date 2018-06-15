@@ -6,21 +6,21 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex';
-import katex from 'katex';
+import { mapGetters } from "vuex";
+import katex from "katex";
 
-import 'katex/dist/katex.min.css';
+import "katex/dist/katex.min.css";
 
 export default {
-  name: 'LatexPreview',
+  name: "LatexPreview",
   data: () => ({
-    latexHtml: '',
+    latexHtml: "",
     error: false,
     zoom: 1,
-    currentLatexFile: '',
+    currentLatexFile: ""
   }),
   computed: {
-    ...mapGetters(['openFile', 'openFileLatex']),
+    ...mapGetters(["openFile", "openFileLatex"])
   },
   methods: {
     updateLatex(latex) {
@@ -32,13 +32,13 @@ export default {
         console.error(e);
         this.error = true;
       }
-    },
+    }
   },
   watch: {
     openFileLatex(newLatex) {
       this.updateLatex(newLatex);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -74,8 +74,8 @@ export default {
     border-radius: 50%;
     background: $primary_color;
     cursor: pointer;
-    -webkit-transition: background .15s ease-in-out;
-    transition: background .15s ease-in-out;
+    -webkit-transition: background 0.15s ease-in-out;
+    transition: background 0.15s ease-in-out;
   }
   .zoom-range::-webkit-slider-thumb:hover {
     background: $secondary_color;
@@ -92,8 +92,8 @@ export default {
     border-radius: 50%;
     background: $primary_color;
     cursor: pointer;
-    -webkit-transition: background .15s ease-in-out;
-    transition: background .15s ease-in-out;
+    -webkit-transition: background 0.15s ease-in-out;
+    transition: background 0.15s ease-in-out;
   }
 
   .zoom-range::-moz-range-thumb:hover {
@@ -104,14 +104,12 @@ export default {
     background: $secondary_color;
   }
 
-
   .katex-display {
     max-width: 100%;
     max-height: 100%;
     transition: font-size 0.8s;
     // font-size: 20px;
-    margin: 0!important;
+    margin: 0 !important;
   }
 }
-
 </style>

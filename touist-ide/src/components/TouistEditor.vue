@@ -36,19 +36,19 @@
 </template>
 
 <script>
-import { mapActions, mapGetters, mapMutations } from 'vuex';
-import CodeMirror from 'codemirror';
+import { mapActions, mapGetters, mapMutations } from "vuex";
+import CodeMirror from "codemirror";
 
-import config from '@/config';
-import debounce from '@/utils/debounce';
+import config from "@/config";
+import debounce from "@/utils/debounce";
 
 export default {
-  name: 'TouistEditor',
+  name: "TouistEditor",
   data: () => ({
     editName: false,
-    editedName: '',
+    editedName: "",
     solverSelectorOpen: false,
-    solvers: config.solvers,
+    solvers: config.solvers
   }),
   created() {
     if (!this.openFile) {
@@ -58,36 +58,34 @@ export default {
   mounted() {
     this.codemirror = CodeMirror.fromTextArea(this.$refs.codemirrorTextarea, {
       lineNumbers: true,
-      mode: 'touist',
-      gutters: [
-        'CodeMirror-lint-markers',
-      ],
+      mode: "touist",
+      gutters: ["CodeMirror-lint-markers"],
       lint: { lintOnChange: false },
-      scrollbarStyle: 'overlay',
-      lineWrapping: true,
+      scrollbarStyle: "overlay",
+      lineWrapping: true
     });
 
     this.codemirror.vueComponent = this;
-    this.codemirror.on('change', cm => this.update(false, cm.getValue()));
+    this.codemirror.on("change", cm => this.update(false, cm.getValue()));
     if (this.openFile) {
       this.codemirror.setValue(this.openFile.content);
       this.updateLatex({
         force: true,
         newContent: this.openFile.content,
-        fileName: this.openFile.name,
+        fileName: this.openFile.name
       });
     }
   },
   computed: {
-    ...mapGetters(['openFile', 'defaultFile']),
+    ...mapGetters(["openFile", "defaultFile"])
   },
   methods: {
-    ...mapActions(['updateLatex', 'updateContent', 'solve']),
-    ...mapMutations(['setName', 'deleteFile', 'setSolver']),
+    ...mapActions(["updateLatex", "updateContent", "solve"]),
+    ...mapMutations(["setName", "deleteFile", "setSolver"]),
     update: debounce(async function update(newContent) {
       await this.updateLatex({
         newContent,
-        fileName: this.openFile.name,
+        fileName: this.openFile.name
       });
       this.updateContent({ fileName: this.openFile.name, newContent });
       this.codemirror.performLint();
@@ -104,17 +102,17 @@ export default {
     },
     async solveFile(fileName) {
       await this.solve(fileName);
-      this.$emit('openModelList');
+      this.$emit("openModelList");
     },
     async changeSolver(solver) {
       this.setSolver({ fileName: this.openFile.name, solver });
       await this.updateLatex({
         newContent: this.openFile.content,
         fileName: this.openFile.name,
-        force: true,
+        force: true
       });
       this.codemirror.performLint();
-    },
+    }
   },
   watch: {
     openFile(newOpenFile) {
@@ -124,8 +122,8 @@ export default {
       }
       this.codemirror.setValue(newOpenFile.content);
       this.update(true, newOpenFile.content);
-    },
-  },
+    }
+  }
 };
 </script>
 
@@ -156,7 +154,8 @@ export default {
     z-index: 10;
     position: relative;
 
-    .left-actions, .right-actions {
+    .left-actions,
+    .right-actions {
       display: flex;
       flex-direction: row;
     }

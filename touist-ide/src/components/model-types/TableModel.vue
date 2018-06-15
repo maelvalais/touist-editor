@@ -18,23 +18,26 @@
 
 <script>
 export default {
-  name: 'TableModel',
-  props: ['currentModelIndex', 'models', 'keyFilter', 'valueFilter'],
+  name: "TableModel",
+  props: ["currentModelIndex", "models", "keyFilter", "valueFilter"],
   computed: {
     filterRegexp() {
       try {
-        return new RegExp(this.keyFilter.split(':')[0]);
+        return new RegExp(this.keyFilter.split(":")[0]);
       } catch (e) {
         return null;
       }
-    },
+    }
   },
   methods: {
     valid(key, value) {
-      return (this.keyFilter.length === 0 || (this.filterRegexp && this.filterRegexp.test(key))) &&
-             (this.valueFilter === null || value === this.valueFilter);
-    },
-  },
+      return (
+        (this.keyFilter.length === 0 ||
+          (this.filterRegexp && this.filterRegexp.test(key))) &&
+        (this.valueFilter === null || value === this.valueFilter)
+      );
+    }
+  }
 };
 </script>
 
@@ -53,7 +56,8 @@ table {
   margin-right: auto;
   border-collapse: collapse;
 
-  th, td {
+  th,
+  td {
     padding: 10px 30px;
     border: 2px solid $mid_color;
   }

@@ -22,28 +22,28 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapMutations } from 'vuex';
+import { mapState, mapGetters, mapMutations } from "vuex";
 
-import config from '@/config';
-import nextId from '@/utils/nextId';
+import config from "@/config";
+import nextId from "@/utils/nextId";
 
 export default {
-  name: 'FileList',
+  name: "FileList",
   data: () => ({
-    config,
+    config
   }),
   methods: {
-    ...mapMutations(['newFile']),
+    ...mapMutations(["newFile"]),
     createNewFile() {
       const name = `File ${nextId()}`;
       this.newFile(name);
       this.$router.replace(`/editor/${name}`);
-    },
+    }
   },
   computed: {
-    ...mapState(['files']),
-    ...mapGetters(['openFile']),
-  },
+    ...mapState(["files"]),
+    ...mapGetters(["openFile"])
+  }
 };
 </script>
 
@@ -56,7 +56,7 @@ export default {
   background-color: $dark_color;
   display: flex;
   flex-direction: column;
-  color: #F2F1EF;
+  color: #f2f1ef;
 
   .item {
     font-size: 14px;
