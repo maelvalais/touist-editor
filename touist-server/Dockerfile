@@ -1,10 +1,14 @@
 FROM rust:latest
 
+# TEMPORARY: to be removed as soon as
+# https://github.com/SergioBenitez/Rocket/issues/660 is solved.
+RUN rustup default nightly-2018-06-09
+
 # IMPORTANT: if the build fails because of some error more or less
 # linked to the fact we are using the nightly: first, try to build
 # without cache so that the latest rustc compiler is downloaded.
 #     docker build . --no-cache
-RUN rustup default nightly
+# RUN rustup default nightly
 WORKDIR /usr/src/app
 
 # These steps are here only in order to cache the dependencies in docker.
