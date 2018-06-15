@@ -158,6 +158,18 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
     }))
 }
 
+#[error(404)]
+fn not_found() -> Json<Value> {
+    Json(json!({
+        "status": "error",
+        "reason": "Resource was not found."
+    }))
+}
+
 fn main() {
-    rocket::ignite().mount(&BASE, routes![index, latex, solve, ping, healthcheck]).launch();
+    rocket::ignite()
+        .mount(&BASE, routes![index, latex, solve, ping, healthcheck,])
+        .mount("/", routes![ping, healthcheck])
+        .catch(errors![not_found])
+        .launch();
 }
