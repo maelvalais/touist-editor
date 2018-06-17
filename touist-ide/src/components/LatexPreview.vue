@@ -29,7 +29,7 @@ export default {
         this.latexHtml = katex.renderToString(latex, { displayMode: true });
         this.error = false;
       } catch (e) {
-        console.error(e);
+        // console.error(e);
         this.error = true;
       }
     },
