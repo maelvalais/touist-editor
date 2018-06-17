@@ -20,7 +20,6 @@
         @blur="saveName"
         class="name-input"
         type="text"
-        :value="openFile.name"
         v-model="editedName"
         v-if="editName"
         ref="nameInput"
