@@ -14,4 +14,5 @@ RUN yarn --pure-lockfile
 COPY . .
 RUN yarn build
 
-CMD bash -c "cd dist && python -m SimpleHTTPServer 8080"
+ENV PORT=8080
+CMD bash -c "cd dist && python -m SimpleHTTPServer ${PORT}"
