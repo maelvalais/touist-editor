@@ -35,9 +35,9 @@ struct TouistInput {
     solver: String
 }
 
-// ROCKET_BASE allows to set the appropriate URL base instead of the (default) / path.
 lazy_static! {
-    static ref BASE : String = std::env::var("ROCKET_BASE").unwrap_or("/".to_string());
+    // ROCKET_BASE allows to set the appropriate URL base instead of the (default) / path.
+    static ref BASE: String = std::env::var("ROCKET_BASE").unwrap_or("/".to_string());
 }
 
 fn parse_error(error: String) -> Option<TouistError> {
@@ -62,9 +62,10 @@ fn parse_error(error: String) -> Option<TouistError> {
 
 #[get("/")]
 fn index() -> Json<Value> {
+    let base_no_trailing = BASE.trim_right_matches("/");
     Json(json!({
-        "solve": format!("{}/solve?source={{touist_code}}&solver={{solver}}", BASE.trim_right_matches("/")),
-        "latex": format!("{}/latex?source={{touist_code}}&solver={{solver}}", BASE.trim_right_matches("/"))
+        "solve_url": format!("{}/solve?source={{touist_code}}&solver={{solver}}", base_no_trailing),
+        "latex_url": format!("{}/latex?source={{touist_code}}&solver={{solver}}", base_no_trailing),
     }))
 }
 
@@ -161,8 +162,8 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 #[error(404)]
 fn not_found() -> Json<Value> {
     Json(json!({
+        "message": "Resource was not found.",
         "status": "error",
-        "reason": "Resource was not found."
     }))
 }
 
