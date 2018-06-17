@@ -16,6 +16,27 @@ use std::process::{Command, Stdio};
 use rocket_contrib::{Json, Value};
 use regex::Regex;
 
+// For CORS support
+use rocket::{Request, Response};
+use rocket::fairing::{Fairing, Info, Kind};
+use rocket::http::{Header};
+
+// Add 'Access-Control-Allow-Origin: *' to the response header so that
+// browsers won't block the API.
+pub struct CORS();
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to requests",
+            kind: Kind::Response
+        }
+    }
+
+    fn on_response(&self, _request: &Request, response: &mut Response) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+    }
+}
+
 #[derive(Serialize)]
 struct Position {
     line: u8,
@@ -169,6 +190,7 @@ fn not_found() -> Json<Value> {
 
 fn main() {
     rocket::ignite()
+        .attach(CORS())
         .mount(&BASE, routes![index, latex, solve, ping, healthcheck,])
         .catch(errors![not_found])
         .launch();
