@@ -18,4 +18,4 @@ ENV PORT=8080
 ENV API_URL=/api
 
 EXPOSE ${PORT}
-CMD bash -c "cd dist && sed s#%API_URL%#${API_URL}# static/js/app.*.js && python -m SimpleHTTPServer ${PORT}"
+CMD bash -c "cd dist && sed -i s#%API_URL%#${API_URL}# static/js/app.*.js && python -m SimpleHTTPServer ${PORT}"
