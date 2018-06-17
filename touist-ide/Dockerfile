@@ -15,4 +15,7 @@ COPY . .
 RUN yarn build
 
 ENV PORT=8080
-CMD bash -c "cd dist && python -m SimpleHTTPServer ${PORT}"
+ENV API_URL=/api
+
+EXPOSE ${PORT}
+CMD bash -c "cd dist && sed s#%API_URL%#${API_URL}# static/js/app.*.js && python -m SimpleHTTPServer ${PORT}"

@@ -1,6 +1,6 @@
 const VERSION = '0.1';
 const isDev = process.env.NODE_ENV !== 'production';
-const apiUrl = process.env.API_URL || '/';
+const apiUrl = process.env.API_URL || '%API_URL%';
 
 export default {
   isDev,
