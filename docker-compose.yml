@@ -25,4 +25,4 @@ services:
     container_name: touist_ide
     build: ./touist-ide
     environment:
-      - API_URL=/api
+      - API_URL=http://${HOST}:8000

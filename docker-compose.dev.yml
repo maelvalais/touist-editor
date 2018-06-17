@@ -23,7 +23,7 @@ services:
       - ./touist-server/src:/usr/src/app/src
     environment:
       - ROCKET_ENV=dev
-      - ROCKET_BASE=/api
+      - ROCKET_BASE=/
       - HOST=${HOST}
 
   touist_ide:
@@ -34,4 +34,4 @@ services:
       - ./touist-ide:/usr/src/app
       - /usr/src/app/node_modules
     environment:
-      - API_URL=/api
+      - API_URL=http://${HOST}:8000

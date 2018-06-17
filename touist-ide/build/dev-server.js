@@ -84,7 +84,6 @@ var readyPromise = new Promise((resolve, reject) => {
 var server;
 var portfinder = require('portfinder');
 portfinder.basePort = port;
-
 console.log('> Starting dev server...');
 devMiddleware.waitUntilValid(() => {
   portfinder.getPort((err, port) => {
