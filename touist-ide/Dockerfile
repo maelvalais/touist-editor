@@ -26,12 +26,12 @@ server {\n\
   location / {\n\
     root /usr/share/nginx/html;\n\
     index index.html index.htm;\n\
-    try_files $uri $uri/ /index.html =404;\n\
   }\n\
 }\n'\
 >> /etc/nginx/conf.d/nginx.tmpl
 
 ENV PORT=8080
+ENV HOST=localhost
 ENV API_URL=http://localhost:8000
 EXPOSE ${PORT}
 
