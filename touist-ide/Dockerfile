@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:latest as node
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
@@ -14,8 +14,28 @@ RUN yarn --pure-lockfile
 COPY . .
 RUN yarn build
 
+# We don't need anything from above except for the dist/ produced. We only
+# need a static www server.
+FROM nginx:latest
+COPY --from=node /usr/src/app/dist /usr/share/nginx/html
+
+# https://www.virtuallyghetto.com/2017/04/quick-tip-creating-a-multiline-dockerfile-using-heredoc-wvariable-substitution.html
+RUN echo '\
+server {\n\
+  listen ${PORT};\n\
+  location / {\n\
+    root /usr/share/nginx/html;\n\
+    index index.html index.htm;\n\
+    try_files $uri $uri/ /index.html =404;\n\
+  }\n\
+}\n'\
+>> /etc/nginx/conf.d/nginx.tmpl
+
 ENV PORT=8080
 ENV API_URL=http://localhost:8000
-
 EXPOSE ${PORT}
-CMD bash -c "cd dist && sed -i s#%API_URL%#${API_URL}# static/js/app.*.js && python -m SimpleHTTPServer ${PORT}"
+
+CMD ["/bin/bash", "-c", "sed -i s#%API_URL%#${API_URL}# /usr/share/nginx/html/static/js/app.*.js \
+    && envsubst < /etc/nginx/conf.d/nginx.tmpl > /etc/nginx/conf.d/default.conf \
+    && grep 'listen' /etc/nginx/conf.d/default.conf \
+    && nginx -g \"daemon off;\""]
