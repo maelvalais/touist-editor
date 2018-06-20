@@ -28,7 +28,7 @@ COPY Cargo.toml Cargo.lock dummy.rs Rocket.toml /usr/src/app/
 RUN cargo build --lib --release
 
 # Now, copy and build our own code
-COPY . /usr/src/app
+COPY src/ /usr/src/app/src
 RUN cargo build --release
 
 # We don't need anything from above except for the binary produced.
@@ -40,10 +40,13 @@ FROM alpine:latest
 COPY --from=rust /usr/src/app/target/x86_64-unknown-linux-musl/release/touist-server /touist-server
 COPY --from=ocaml /usr/src/app/touist /external/
 
+ENV PORT=8080
+ENV BASE=/
+ENV ENV=dev
+
 # ROCKET_ADDRESS must be set to '0.0.0.0' Otherwise, if set to 'localhost'
 # or something else, the host won't be able to reach the rocket server for
 # some reason.
-ENV PORT=8080 ROCKET_PORT=${PORT} ROCKET_ENV=dev ROCKET_ADDRESS=0.0.0.0
-# ENV ROCKET_SECRET_KEY=
+ENV ADDRESS=0.0.0.0
 
-CMD ["sh", "-c", "/touist-server"]
+CMD ["sh", "-c", "ROCKET_PORT=${PORT} ROCKET_ENV=${ENV} ROCKET_BASE=${BASE} ROCKET_ADDRESS=${ADDRESS} /touist-server"]
