@@ -10,8 +10,11 @@ WORKDIR /usr/src/app
 COPY package.json yarn.lock ./
 RUN yarn --pure-lockfile
 
-# Now, actually build
+# Now, actually build. Don't forget to add useless files in .dockerignore
+# (e.i., Dockerfile, node_modules), otherwise 'docker build' will rebuild
+# layers over and over.
 COPY . .
+
 RUN yarn build
 
 # We don't need anything from above except for the dist/ produced. We only
@@ -23,9 +26,13 @@ COPY --from=node /usr/src/app/dist /usr/share/nginx/html
 RUN echo '\
 server {\n\
   listen ${PORT};\n\
+  server_name ${HOST};\n\
   location / {\n\
     root /usr/share/nginx/html;\n\
     index index.html index.htm;\n\
+    if ($http_x_forwarded_proto = 'http') {\n\
+         return 301 https://$server_name$request_uri;\n\
+    }\n\
   }\n\
 }\n'\
 >> /etc/nginx/conf.d/nginx.tmpl
@@ -37,5 +44,5 @@ EXPOSE ${PORT}
 
 CMD ["/bin/bash", "-c", "sed -i s#%API_URL%#${API_URL}# /usr/share/nginx/html/static/js/app.*.js \
     && envsubst < /etc/nginx/conf.d/nginx.tmpl > /etc/nginx/conf.d/default.conf \
-    && grep 'listen' /etc/nginx/conf.d/default.conf \
+    && cat /etc/nginx/conf.d/default.conf \
     && nginx -g \"daemon off;\""]
