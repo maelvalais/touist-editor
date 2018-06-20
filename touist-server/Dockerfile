@@ -28,7 +28,7 @@ COPY Cargo.toml Cargo.lock dummy.rs Rocket.toml /usr/src/app/
 RUN cargo build --lib --release
 
 # Now, copy and build our own code
-COPY src/ /usr/src/app/src
+COPY . /usr/src/app/
 RUN cargo build --release
 
 # We don't need anything from above except for the binary produced.
