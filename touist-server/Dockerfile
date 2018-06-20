@@ -1,3 +1,11 @@
+FROM ocaml/opam:alpine as ocaml
+WORKDIR /usr/src/app
+RUN opam depext conf-gmp conf-m4 conf-perl
+RUN opam install yices2
+RUN opam install qbf
+RUN opam pin add touist --dev-repo
+RUN sudo cp $(opam config var touist:bin)/touist /usr/src/app
+
 # TEMPORARY: as soon as
 # https://github.com/SergioBenitez/Rocket/issues/660 is solved,
 # replace with 'nightly'
@@ -24,9 +32,18 @@ COPY . /usr/src/app
 RUN cargo build --release
 
 # We don't need anything from above except for the binary produced.
-# Using multi-layer will give us a much smaller image.
-FROM scratch
+# Using multi-layer will give us a much smaller image. At first, I wanted to
+# use the 'FROM scratch' (with statically-compiled binary using muslrust) but
+# then I realized that the 'touist' binary isn't stand-alone and is dynamically
+# linked to glic. So I switched over to alpine.
+FROM alpine:latest
 COPY --from=rust /usr/src/app/target/x86_64-unknown-linux-musl/release/touist-server /touist-server
-ENV PORT=8080
-ENV ROCKET_PORT=$PORT
-CMD ["/touist-server"]
+COPY --from=ocaml /usr/src/app/touist /external/
+
+# ROCKET_ADDRESS must be set to '0.0.0.0' Otherwise, if set to 'localhost'
+# or something else, the host won't be able to reach the rocket server for
+# some reason.
+ENV PORT=8080 ROCKET_PORT=${PORT} ROCKET_ENV=dev ROCKET_ADDRESS=0.0.0.0
+# ENV ROCKET_SECRET_KEY=
+
+CMD ["sh", "-c", "/touist-server"]
