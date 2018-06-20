@@ -30,7 +30,7 @@ server {\n\
   location / {\n\
     root /usr/share/nginx/html;\n\
     index index.html index.htm;\n\
-    if ($http_x_forwarded_proto = 'http') {\n\
+    if ($http_x_forwarded_proto = "http") {\n\
          return 301 https://$server_name$request_uri;\n\
     }\n\
   }\n\
@@ -43,6 +43,6 @@ ENV API_URL=http://localhost:8000
 EXPOSE ${PORT}
 
 CMD ["/bin/bash", "-c", "sed -i s#%API_URL%#${API_URL}# /usr/share/nginx/html/static/js/app.*.js \
-    && envsubst < /etc/nginx/conf.d/nginx.tmpl > /etc/nginx/conf.d/default.conf \
+    && envsubst '$$PORT,$$HOST' < /etc/nginx/conf.d/nginx.tmpl > /etc/nginx/conf.d/default.conf \
     && cat /etc/nginx/conf.d/default.conf \
     && nginx -g \"daemon off;\""]
