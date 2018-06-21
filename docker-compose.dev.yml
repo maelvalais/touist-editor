@@ -2,36 +2,46 @@ version: '3'
 
 services:
   touist_nginx:
+    image: touist/editor-nginx:latest
     container_name: touist_nginx
     build: ./touist-nginx
-    command: bash -c "envsubst '$$HOST' < /etc/nginx/conf.d/touist.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     ports:
       - 80:80
     environment:
       - HOST=${HOST}
-    volumes:
-      - ./touist-nginx/nginx.conf:/etc/nginx/conf.d/touist.template
+      - PORT=80
+      - HOST_API=touist_server
+      - PORT_API=8000
+      - HOST_WWW=touist_ide
+      - PORT_WWW=8080
     depends_on:
       - touist_server
       - touist_ide
+    volumes:
+      - ./touist-nginx/nginx.conf:/etc/nginx/conf.d/nginx.tmpl
 
   touist_server:
+    image: touist/editor-server:latest
     container_name: touist_server
     build: ./touist-server
+    environment:
+      - HOST=${HOST}
+      - BASE=/api
+      - PORT=8000
+      - ENV=dev
     command: cargo run
     volumes:
       - ./touist-server/src:/usr/src/app/src
-    environment:
-      - ROCKET_ENV=dev
-      - ROCKET_BASE=/
-      - HOST=${HOST}
 
   touist_ide:
+    image: touist/editor-ide:latest
     container_name: touist_ide
     build: ./touist-ide
+    environment:
+      - HOST=${HOST}
+      - PORT=8080
+      - API_URL=http://${HOST}/api
     command: yarn dev
     volumes:
       - ./touist-ide:/usr/src/app
       - /usr/src/app/node_modules
-    environment:
-      - API_URL=http://${HOST}:8000

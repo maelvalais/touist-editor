@@ -2,27 +2,37 @@ version: '3'
 
 services:
   touist_nginx:
+    image: touist/editor-nginx
     container_name: touist_nginx
     build: ./touist-nginx
-    command: bash -c "envsubst '$$HOST' < /etc/nginx/conf.d/touist.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
     ports:
       - 80:80
     environment:
       - HOST=${HOST}
+      - PORT=80
+      - HOST_API=touist_server
+      - PORT_API=8000
+      - HOST_WWW=touist_ide
+      - PORT_WWW=8080
     depends_on:
       - touist_server
       - touist_ide
 
   touist_server:
+    image: touist/editor-server
     container_name: touist_server
     build: ./touist-server
     environment:
-      - ROCKET_ENV=prod
-      - ROCKET_BASE=/api
       - HOST=${HOST}
+      - BASE=/api
+      - PORT=8000
+      - ENV=prod
 
   touist_ide:
+    image: touist/editor-ide
     container_name: touist_ide
     build: ./touist-ide
     environment:
-      - API_URL=http://${HOST}:8000
+      - HOST=${HOST}
+      - PORT=8080
+      - API_URL=http://${HOST}/api
