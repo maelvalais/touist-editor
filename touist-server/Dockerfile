@@ -40,16 +40,15 @@ FROM alpine:latest
 COPY --from=rust /usr/src/app/target/x86_64-unknown-linux-musl/release/touist-server /touist-server
 COPY --from=ocaml /usr/src/app/touist /external/
 
-ENV PORT=8080
-ENV BASE=/
-ENV ENV=dev
 # LOG: critical | normal | debug
-ENV LOG=normal
-
-
+ENV PORT=8080  \
+    BASE=/     \
+    ENV=dev    \
+    LOG=normal \
+    ADDRESS=0.0.0.0
 # ROCKET_ADDRESS must be set to '0.0.0.0' Otherwise, if set to 'localhost'
 # or something else, the host won't be able to reach the rocket server for
 # some reason.
-ENV ADDRESS=0.0.0.0
+
 
 CMD ["sh", "-c", "ROCKET_PORT=${PORT} ROCKET_ENV=${ENV} ROCKET_BASE=${BASE} ROCKET_ADDRESS=${ADDRESS} ROCKET_LOG=${LOG} /touist-server"]

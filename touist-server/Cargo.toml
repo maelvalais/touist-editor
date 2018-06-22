@@ -11,6 +11,7 @@ regex = "1.0.0"
 serde = "1.0"
 serde_derive = "1.0"
 lazy_static = "1.0.0"
+log = "0.4"
 
 # This is a trick in order to avoid the rebuild of every dependency package.
 # We only want our main.rs to be recompiled, the rest should be cached by

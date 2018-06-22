@@ -1,6 +1,6 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
-
+#![feature(use_extern_macros)]
 extern crate regex;
 extern crate rocket;
 #[macro_use]
@@ -10,14 +10,14 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
-
-use std::collections::HashMap;
-use std::io::{Read, Write};
-use std::process::{Command, Stdio};
+#[macro_use(trace, log)]
+extern crate log;
 
 use regex::Regex;
 use rocket_contrib::{Json, Value};
-
+use std::collections::HashMap;
+use std::io::{Read, Write};
+use std::process::{Command, Stdio};
 // For CORS support
 use rocket::fairing::{Fairing, Info, Kind};
 use rocket::http::Header;
@@ -193,25 +193,28 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 
     let mut models = Vec::new();
 
-    let parts: Vec<&str> = stdout.split("==== ").collect();
-    let len = parts.len();
-
-    if len > 1 {
-        for part in &parts[0..len] {
-            let mut model: HashMap<String, bool> = HashMap::new();
-            if !part.to_string().starts_with("model") {
-                continue;
-            }
-            for capture in RE.captures_iter(part) {
-                model.insert(
-                    capture
-                        .name("key")
-                        .map_or(String::from(""), |m| String::from(m.as_str())),
-                    capture.name("value").map_or(false, |m| m.as_str() == "1"),
-                );
-            }
-            models.push(model);
+    let mut cur_model: HashMap<String, bool> = HashMap::new();
+    let lines: Vec<&str> = stdout.split("\n").collect();
+    for line in lines {
+        trace!("{}", line); // use ROCKET_LOG=debug for that
+        if line.to_string().starts_with("====") {
+            if !cur_model.is_empty() {
+                models.push(cur_model);
+                cur_model = HashMap::new();
+            };
+            continue;
         }
+        RE.captures(line).and_then(|capture| {
+            cur_model.insert(
+                capture
+                    .name("key")
+                    .map_or(String::from(""), |m| String::from(m.as_str())),
+                capture.name("value").map_or(false, |m| m.as_str() == "1"),
+            )
+        });
+    }
+    if !cur_model.is_empty() {
+        models.push(cur_model);
     }
 
     Json(json!({
@@ -233,7 +236,7 @@ fn not_found() -> Json<Value> {
 fn main() {
     rocket::ignite()
         .attach(CORS())
-        .mount(&BASE, routes![index, latex, solve, ping, healthcheck,])
+        .mount(&BASE, routes![index, latex, solve, ping, healthcheck])
         .catch(errors![not_found])
         .launch();
 }
