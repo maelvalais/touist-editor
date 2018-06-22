@@ -52,8 +52,9 @@ struct TouistError {
 
 #[derive(FromForm)]
 struct TouistInput {
-    source: String,
-    solver: String
+    source: Option<String>,
+    solver: Option<String>,
+    limit: Option<i32>
 }
 
 lazy_static! {
@@ -110,12 +111,13 @@ fn latex(touist_input: TouistInput) -> Json<Value> {
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .arg("-")
-            .arg("--latex")
+            .arg("--latex=mathjax")
+            .arg("--wrap-width=0")
             .arg("--linter")
-            .arg(format!("--{}", touist_input.solver).as_str())
+            .arg(format!("--{}", touist_input.solver.unwrap_or("".to_string())).as_str())
             .spawn().unwrap();
 
-    let _ = process.stdin.unwrap().write_all(touist_input.source.as_bytes());
+    let _ = process.stdin.unwrap().write_all(touist_input.source.unwrap_or("".to_string()).as_bytes());
 
     let mut stdout = String::new();
     let _ = process.stdout.unwrap().read_to_string(&mut stdout);
@@ -134,20 +136,33 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
     lazy_static! {
         static ref RE: Regex = Regex::new(r"(?P<value>[0|1]) (?P<key>\S*)").unwrap();
     }
-
-    let process =
+    let source = touist_input.source.unwrap_or("".to_string());
+    let limit = touist_input.limit.unwrap_or(1).to_string();
+    let solver = touist_input.solver.unwrap_or("sat".to_string());
+    match solver.as_ref() {
+        "sat" => "sat",
+        "smt" => "smt",
+        _ => return Json(json!({
+                "status": "error",
+                "message": "the 'solver' field must be 'sat' or 'smt'"
+            }))
+    };
+    let mut process =
         Command::new("./external/touist")
             .stdin(Stdio::piped())
             .stdout(Stdio::piped())
             .stderr(Stdio::piped())
             .arg("-")
             .arg("--solve")
-            .arg(format!("--{}", touist_input.solver).as_str())
+            .arg("--wrap-width=0")
+            .arg(format!("--{}", solver).as_str())
             .arg("--limit")
-            .arg("1000")
+            .arg(limit)
             .spawn().unwrap();
 
-    let _ = process.stdin.unwrap().write_all(touist_input.source.as_bytes());
+    let _ = process.stdin.as_mut().unwrap().write_all(source.as_bytes());
+
+    let result = process.wait().unwrap();
 
     let mut stdout = String::new();
     let _ = process.stdout.unwrap().read_to_string(&mut stdout);
@@ -176,7 +191,9 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 
     Json(json!({
         "models": models,
-        "error": parse_error(stderr)
+        "error_raw": stderr.to_string(),
+        "error": parse_error(stderr),
+        "code": result.code().unwrap()
     }))
 }
 
