@@ -1,25 +1,27 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
-extern crate rocket;
 extern crate regex;
-#[macro_use] extern crate rocket_contrib;
-#[macro_use] extern crate lazy_static;
-#[macro_use] extern crate serde_derive;
+extern crate rocket;
+#[macro_use]
+extern crate rocket_contrib;
+#[macro_use]
+extern crate lazy_static;
+#[macro_use]
+extern crate serde_derive;
 extern crate serde;
 
-
 use std::collections::HashMap;
-use std::io::{Write, Read};
+use std::io::{Read, Write};
 use std::process::{Command, Stdio};
 
-use rocket_contrib::{Json, Value};
 use regex::Regex;
+use rocket_contrib::{Json, Value};
 
 // For CORS support
-use rocket::{Request, Response};
 use rocket::fairing::{Fairing, Info, Kind};
-use rocket::http::{Header};
+use rocket::http::Header;
+use rocket::{Request, Response};
 
 // Add 'Access-Control-Allow-Origin: *' to the response header so that
 // browsers won't block the API.
@@ -28,7 +30,7 @@ impl Fairing for CORS {
     fn info(&self) -> Info {
         Info {
             name: "Add CORS headers to requests",
-            kind: Kind::Response
+            kind: Kind::Response,
         }
     }
 
@@ -40,21 +42,21 @@ impl Fairing for CORS {
 #[derive(Serialize)]
 struct Position {
     line: u8,
-    column: u8
+    column: u8,
 }
 
 #[derive(Serialize)]
 struct TouistError {
     message: String,
     start: Position,
-    end: Position
+    end: Position,
 }
 
 #[derive(FromForm)]
 struct TouistInput {
     source: Option<String>,
     solver: Option<String>,
-    limit: Option<i32>
+    limit: Option<i32>,
 }
 
 lazy_static! {
@@ -68,18 +70,32 @@ fn parse_error(error: String) -> Option<TouistError> {
     }
 
     for capture in RE.captures(error.as_str()) {
-        let line = capture.name("line").map_or(0, |m| { m.as_str().parse::<u8>().unwrap() });
-        let colstart = capture.name("colstart").map_or(0, |m| { m.as_str().parse::<u8>().unwrap() });
-        let tmp = capture.name("colend").map_or(0, |m| { m.as_str().parse::<u8>().unwrap() });
+        let line = capture
+            .name("line")
+            .map_or(0, |m| m.as_str().parse::<u8>().unwrap());
+        let colstart = capture
+            .name("colstart")
+            .map_or(0, |m| m.as_str().parse::<u8>().unwrap());
+        let tmp = capture
+            .name("colend")
+            .map_or(0, |m| m.as_str().parse::<u8>().unwrap());
         let colend = if tmp == 1 { 255 } else { tmp };
 
         return Some(TouistError {
-            message: capture.name("message").map_or(String::from(""), |m| String::from(m.as_str())),
-            start: Position { line: line, column: colstart },
-            end: Position { line: line, column: colend }
-        })
+            message: capture
+                .name("message")
+                .map_or(String::from(""), |m| String::from(m.as_str())),
+            start: Position {
+                line: line,
+                column: colstart,
+            },
+            end: Position {
+                line: line,
+                column: colend,
+            },
+        });
     }
-    return None
+    return None;
 }
 
 #[get("/")]
@@ -105,19 +121,22 @@ pub fn healthcheck() -> Json<Value> {
 
 #[get("/latex?<touist_input>")]
 fn latex(touist_input: TouistInput) -> Json<Value> {
-    let process =
-        Command::new("./external/touist")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .arg("-")
-            .arg("--latex=mathjax")
-            .arg("--wrap-width=0")
-            .arg("--linter")
-            .arg(format!("--{}", touist_input.solver.unwrap_or("".to_string())).as_str())
-            .spawn().unwrap();
+    let process = Command::new("./external/touist")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .arg("-")
+        .arg("--latex=mathjax")
+        .arg("--wrap-width=0")
+        .arg("--linter")
+        .arg(format!("--{}", touist_input.solver.unwrap_or("".to_string())).as_str())
+        .spawn()
+        .unwrap();
 
-    let _ = process.stdin.unwrap().write_all(touist_input.source.unwrap_or("".to_string()).as_bytes());
+    let _ = process
+        .stdin
+        .unwrap()
+        .write_all(touist_input.source.unwrap_or("".to_string()).as_bytes());
 
     let mut stdout = String::new();
     let _ = process.stdout.unwrap().read_to_string(&mut stdout);
@@ -142,23 +161,25 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
     match solver.as_ref() {
         "sat" => "sat",
         "smt" => "smt",
-        _ => return Json(json!({
+        _ => {
+            return Json(json!({
                 "status": "error",
                 "message": "the 'solver' field must be 'sat' or 'smt'"
             }))
+        }
     };
-    let mut process =
-        Command::new("./external/touist")
-            .stdin(Stdio::piped())
-            .stdout(Stdio::piped())
-            .stderr(Stdio::piped())
-            .arg("-")
-            .arg("--solve")
-            .arg("--wrap-width=0")
-            .arg(format!("--{}", solver).as_str())
-            .arg("--limit")
-            .arg(limit)
-            .spawn().unwrap();
+    let mut process = Command::new("./external/touist")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .arg("-")
+        .arg("--solve")
+        .arg("--wrap-width=0")
+        .arg(format!("--{}", solver).as_str())
+        .arg("--limit")
+        .arg(limit)
+        .spawn()
+        .unwrap();
 
     let _ = process.stdin.as_mut().unwrap().write_all(source.as_bytes());
 
@@ -177,12 +198,16 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
 
     if len > 1 {
         for part in &parts[0..len] {
-            let mut model : HashMap<String, bool> = HashMap::new();
-            if !part.to_string().starts_with("model") { continue }
+            let mut model: HashMap<String, bool> = HashMap::new();
+            if !part.to_string().starts_with("model") {
+                continue;
+            }
             for capture in RE.captures_iter(part) {
                 model.insert(
-                    capture.name("key").map_or(String::from(""), |m| String::from(m.as_str())),
-                    capture.name("value").map_or(false, |m| m.as_str() == "1")
+                    capture
+                        .name("key")
+                        .map_or(String::from(""), |m| String::from(m.as_str())),
+                    capture.name("value").map_or(false, |m| m.as_str() == "1"),
                 );
             }
             models.push(model);
