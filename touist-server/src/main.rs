@@ -1,6 +1,5 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
-#![feature(use_extern_macros)]
 extern crate regex;
 extern crate rocket;
 #[macro_use]
@@ -10,7 +9,7 @@ extern crate lazy_static;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
-#[macro_use(trace, log)]
+#[macro_use(trace)]
 extern crate log;
 
 use regex::Regex;
@@ -225,7 +224,7 @@ fn solve(touist_input: TouistInput) -> Json<Value> {
     }))
 }
 
-#[error(404)]
+#[catch(404)]
 fn not_found() -> Json<Value> {
     Json(json!({
         "message": "Resource was not found.",
@@ -237,6 +236,6 @@ fn main() {
     rocket::ignite()
         .attach(CORS())
         .mount(&BASE, routes![index, latex, solve, ping, healthcheck])
-        .catch(errors![not_found])
+        .catch(catchers![not_found])
         .launch();
 }

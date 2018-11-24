@@ -1,15 +1,16 @@
-FROM ocaml/opam:alpine as ocaml
+FROM ocaml/opam2-staging:alpine as ocaml
 WORKDIR /usr/src/app
-RUN opam depext conf-gmp conf-m4 conf-perl
-RUN opam install yices2
-RUN opam install qbf
-RUN opam pin add touist --dev-repo
+RUN opam install -y depext
+RUN opam depext -y conf-gmp conf-m4 conf-perl
+RUN opam install -y yices2
+RUN opam install -y qbf
+RUN opam pin add touist -y --dev-repo
 RUN sudo cp $(opam config var touist:bin)/touist /usr/src/app
 
 # TEMPORARY: as soon as
 # https://github.com/SergioBenitez/Rocket/issues/660 is solved,
 # replace with 'nightly'
-FROM clux/muslrust:nightly-2018-06-09 as rust
+FROM clux/muslrust:latest as rust
 # Note: we use a MUSL image so that we get a binary with no dynamically-linked
 # binaries so that we can ship using 'FROM scratch'.
 
