@@ -1,0 +1,22 @@
+# Secret variables stored in Gitlab CI:
+# - DOCKER_HUB_USER
+# - DOCKER_HUB_PASS
+stages:
+  - deploy
+
+before_script:
+  - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASS
+
+touist-server:
+  stage: deploy
+  script:
+    - cd touist-server
+    - docker build -t touist/editor-server
+    - docker push touist/editor-server
+
+touist-ide:
+  stage: deploy
+  script:
+    - cd touist-ide
+    - docker build -t touist/editor-ide
+    - docker push touist/editor-ide
