@@ -1,5 +1,9 @@
-Touist editor
-======
+TouIST web editor
+=================
+
+![](https://img.shields.io/docker/build/touist/editor-ide.svg?label=touist/editor-ide:latest)
+![](https://img.shields.io/docker/build/touist/editor-server.svg?label=touist/editor-server:latest)
+![](https://img.shields.io/docker/build/touist/editor-nginx.svg?label=touist/editor-nginx:latest)
 
 A simple browser based ide for [Touist](https://github.com/touist/touist)
 
